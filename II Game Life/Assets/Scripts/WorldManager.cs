@@ -24,8 +24,8 @@ public class WorldManager : MonoBehaviour
         int y = 20;
         CreateRandomWorld(x, y, 0, 10, 0, 10);
         ShowWorld();
-        //ShowWarmMap();
-        //ShowFoodMap();
+        ShowWarmMap();
+        ShowFoodMap();
 
         RandomPlace(x, y);
     }
