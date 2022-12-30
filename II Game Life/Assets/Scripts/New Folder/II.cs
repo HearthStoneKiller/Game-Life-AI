@@ -164,3 +164,7 @@ public class SemanticNetworkNode
 {
 
 }
+public class SemanticNetworkEdge
+{
+
+}
