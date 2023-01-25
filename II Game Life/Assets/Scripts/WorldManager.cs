@@ -5,201 +5,62 @@ using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEditor.TextCore.Text;
 using UnityEngine;
 using Microsoft.Unity.VisualStudio.Editor;
+using Unity.VisualScripting;
 
 public class WorldManager : MonoBehaviour
 {
-    double[,] situation;
-    public FoodMap foodMap;
-    public WarmMap warmMap;
+    public World world;
+    public int height;
+    public int width;
 
     public GameObject cell;
     public GameObject food;
-
-    public GameObject creature;
-    public int countOfCreatures;
     public void Start()
     {
-        countOfCreatures = 1;
-        int x = 20;
-        int y = 20;
-        CreateRandomWorld(x, y, 0, 10, 0, 10);
+        width = 20;
+        height = 20;
+        //World(importedX, importedY, minFood, maxFood, minWarm, maxWarm)
+        world = new World(width, height, 0, 5, 0, 10);
         ShowWorld();
-        ShowWarmMap();
-        ShowFoodMap();
-
-        RandomPlace(x, y);
     }
     public void Update()
     {
-         
-    }
-    public WorldManager()
-    {
-
-    }
-    public WorldManager(int importedX, int importedY)
-    {
-        situation = new double[importedY, importedX];
-        foodMap.map = new double[importedY, importedX];
-        warmMap.map = new double[importedY, importedX];
-        for (int i = 0;i < importedY;i++)
-        {
-            for (int j = 0; j < importedX; j++)
-            {
-                situation[i,j] = 0;
-                foodMap.map[i, j] = 0;
-                warmMap.map[i, j] = 0;
-            }
-        }
-    }
-    public void SetSituationScale(int importedX, int importedY)
-    {
-        situation = new double[importedY, importedX];
-    }
-    public void SetSituation(double[,] importemMap)
-    {
-        situation = importemMap;
-    }
-    public void SetFoodMapScale(int importedX, int importedY)
-    {
-        foodMap.map = new double[importedY, importedX];
-        SetFoodMapScale(importedX, importedY);
-        SetWarmMapScale(importedX, importedY);
-    }
-    public void SetFoodMap(double[,] importemMap)
-    {
-        foodMap.map = importemMap;
-    }
-    public void SetWarmMapScale(int importedX, int importedY)
-    {
-        warmMap.map = new double[importedY, importedX];
-    }
-    public void SetWarmMap(double[,] importemMap)
-    {
-        warmMap.map = importemMap;
-    }
-    public void CreateRandomWorld(int importedX, int importedY, int minFood, int maxFood, int minWarm, int maxWarm)
-    {
-        situation = new double[importedY, importedX];
-        foodMap = new FoodMap(importedX, importedY, minFood, maxFood);
-        warmMap = new WarmMap(importedX, importedY, minWarm, maxWarm);
+        world.ChangeWorld();
+        ShowWorld();
     }
     public void ShowWorld()
     {
-        for (int i = 0; i < situation.GetLength(0); i++)
-        {
-            for (int j = 0; j < situation.GetLength(1); j++)
-            {
-                SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
-                spriteRenderer.color = new UnityEngine.Color(1, 1, 1, 1f);
-                Instantiate(cell,new Vector3(i,j,0),Quaternion.identity);
-            }
-        }
+        GameObject[] cellsToDelete = GameObject.FindGameObjectsWithTag("Cell");
+        GameObject[] foodToDelete = GameObject.FindGameObjectsWithTag("Food");
+        foreach (GameObject cell in cellsToDelete)
+            Destroy(cell);
+        foreach (GameObject food in foodToDelete)
+            Destroy(food);
+        ShowWarmMap();
+        ShowFoodMap();
     }
     public void ShowFoodMap()
     {
-        for (int i = 0; i < foodMap.map.GetLength(0); i++)
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < foodMap.map.GetLength(1); j++)
+            for (int j = 0; j < width; j++)
             {
                 SpriteRenderer spriteRenderer = food.GetComponent<SpriteRenderer>();
-                spriteRenderer.color = new UnityEngine.Color(1 - (float)foodMap.map[i, j] / foodMap.maxVolume, 1 , 1 - (float)foodMap.map[i, j] / foodMap.maxVolume, 1f);
-                Instantiate(food, new Vector3(i, j, 0), Quaternion.identity);
+                spriteRenderer.color = new UnityEngine.Color(1 - (float)world.foodMap.map[i, j] / world.foodMap.maxVolume, 1, 1 - (float)world.foodMap.map[i, j] / world.foodMap.maxVolume, 1f);
+                Instantiate(food, new Vector3(j, i, 0), Quaternion.identity);
             }
         }
     }
     public void ShowWarmMap()
     {
-        for (int i = 0; i < situation.GetLength(0); i++)
+        for (int i = 0; i < height; i++)
         {
-            for (int j = 0; j < situation.GetLength(1); j++)
+            for (int j = 0; j < width; j++)
             {
                 SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
-                spriteRenderer.color = new UnityEngine.Color((float)warmMap.map[i, j] / warmMap.maxVolume, 0, 1 - (float)warmMap.map[i, j] / warmMap.maxVolume, 1f);
-                Instantiate(cell, new Vector3(i, j, 0), Quaternion.identity);
-            }
-        }
-    }
-    public void RandomPlace(int maxX, int maxY)
-    {
-        int coordinateX = Random.Range(0, maxX);
-        int coordinateY = Random.Range(0, maxY);
-        II ii = creature.GetComponent<II>();
-        ii.coordinateX = coordinateX;
-        ii.coordinateY = coordinateY;
-        Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
-    }
-}
-public class FoodMap
-{
-    public double[,] map;
-    public int maxVolume;
-    public int minVolume;
-    public FoodMap(double[,] importedMap)
-    {
-        map = importedMap;
-    }
-    public FoodMap(int importedX, int importedY)
-    {
-        maxVolume = 0;
-        minVolume = 0;
-        map = new double[importedY, importedX];
-        for (int i = 0; i < importedY; i++)
-        {
-            for (int j = 0; j < importedX; j++)
-            {
-                map[i, j] = 0;
-            }
-        }
-    }
-    public FoodMap(int importedX, int importedY, int min, int max)
-    {
-        maxVolume = max;
-        minVolume = min;
-        map = new double[importedY, importedX];
-        for (int i = 0; i < importedY; i++)
-        {
-            for (int j = 0; j < importedX; j++)
-            {
-                map[i, j] = Random.Range(min, max);
+                spriteRenderer.color = new UnityEngine.Color((float)world.warmMap.map[i, j] / world.warmMap.maxVolume, 0, 1 - (float)world.warmMap.map[i, j] / world.warmMap.maxVolume, 1f);
+                Instantiate(cell, new Vector3(j, i, 0), Quaternion.identity);
             }
         }
     }
 }
-public class WarmMap
-{
-    public double[,] map;
-    public int maxVolume;
-    public int minVolume;
-    public WarmMap(double[,] importedMap)
-    {
-        map = importedMap;
-    }
-    public WarmMap(int importedX, int importedY)
-    {
-        maxVolume = 0;
-        minVolume = 0;
-        map = new double[importedY, importedX];
-        for (int i = 0; i < importedY; i++)
-        {
-            for (int j = 0; j < importedX; j++)
-            {
-                map[i, j] = 0;
-            }
-        }
-    }
-    public WarmMap(int importedX, int importedY, int min, int max)
-    {
-        maxVolume = max;
-        minVolume = min;
-        map = new double[importedY, importedX];
-        for (int i = 0; i < importedY; i++)
-        {
-            for (int j = 0; j < importedX; j++)
-            {
-                map[i, j] = Random.Range(min, max);
-            }
-        }
-    }
-}
-  
