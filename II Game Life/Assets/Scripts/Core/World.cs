@@ -82,10 +82,10 @@ public class FoodMap: IChangeable
 }
 public class WarmMap: IChangeable
 {
-    public double[,] map;
+    public int[,] map;
     public int maxVolume;
     public int minVolume;
-    public WarmMap(double[,] importedMap)
+    public WarmMap(int[,] importedMap)
     {
         map = importedMap;
     }
@@ -93,7 +93,7 @@ public class WarmMap: IChangeable
     {
         maxVolume = 0;
         minVolume = 0;
-        map = new double[importedY, importedX];
+        map = new int[importedY, importedX];
         for (int i = 0; i < importedY; i++)
         {
             for (int j = 0; j < importedX; j++)
@@ -106,7 +106,7 @@ public class WarmMap: IChangeable
     {
         maxVolume = max;
         minVolume = min;
-        map = new double[importedY, importedX];
+        map = new int[importedY, importedX];
         for (int i = 0; i < importedY; i++)
         {
             for (int j = 0; j < importedX; j++)

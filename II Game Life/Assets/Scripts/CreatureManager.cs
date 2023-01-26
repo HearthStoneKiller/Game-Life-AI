@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CreatureManager : MonoBehaviour
 {
-    II II;
+    RandomII II;
 
     int coordinateX;
     int coordinateY;
@@ -25,7 +25,8 @@ public class CreatureManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        II.ChooseMove(GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
+        //II.ChooseMove(GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
+        II.RandomMove();
         asv.transform.position = new Vector3(II.coordinateX, II.coordinateY, 0);
     }
     public void ShowCreature()

@@ -17,7 +17,7 @@ public abstract class II
 
     public int mindDeep;
 
-    public string condition;
+    public Condition condition;
     //energy = Mathf.Round(Random.Range(0f, 20f)) / 2;
     //satiety = Mathf.Round(Random.Range(0f, 20f)) / 2;
     //mindDeep = 1;
@@ -61,39 +61,6 @@ public abstract class II
     {
 
     }
-    public void GetCondition()
-    {
-        if (satiety <= maxSatiety / 2)
-        {
-            if (temp <= maxTemp / 3)
-            {
-                condition = "Холодно";
-            }
-            else if (temp > maxTemp - maxTemp / 3)
-            {
-                condition = "Жарко";
-            }
-            else
-            {
-                condition = "Оптимально";
-            }
-        }
-        else
-        {
-            if (temp <= maxTemp / 3)
-            {
-                condition = "Голод и Холодно";
-            }
-            else if (temp > maxTemp - maxTemp / 3)
-            {
-                condition = "Голод и Жарко";
-            }
-            else
-            {
-                condition = "Голод";
-            }
-        }
-    }
     public abstract void ChooseMove(World world);
 }
 public class RandomII : II
@@ -110,7 +77,9 @@ public class RandomII : II
         satiety = importedMaxSatiety / 2;
         maxSatiety = importedMaxSatiety;
         mindDeep = 0;
-        GetCondition();
+
+        condition = new Condition();
+        condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
     }
     public void RandomMove()
     {
@@ -136,7 +105,13 @@ public class RandomII : II
     }
     public override void ChooseMove(World world)
     {
-
+        int foodMetric = condition.foodMetric;
+        int tempMetric = condition.tempMetric;
+        int[] metric = new int[5];
+        for(int i = 0;i < mindDeep;i++)
+        {
+            metric[i] = world.foodMap.map[coordinateY,coordinateX] + world.warmMap.map[coordinateY, coordinateX];
+        }
     }
 }
 public class BeginnerII : II
