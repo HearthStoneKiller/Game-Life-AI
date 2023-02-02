@@ -6,6 +6,7 @@ using UnityEditor.TextCore.Text;
 using UnityEngine;
 using Microsoft.Unity.VisualStudio.Editor;
 using Unity.VisualScripting;
+using System.Diagnostics.Tracing;
 
 public class WorldManager : MonoBehaviour
 {
@@ -15,18 +16,18 @@ public class WorldManager : MonoBehaviour
 
     public GameObject cell;
     public GameObject food;
-    public void Start()
+    public void Awake()
     {
         width = 20;
         height = 20;
         //World(importedX, importedY, minFood, maxFood, minWarm, maxWarm)
-        world = new World(width, height, 0, 5, 0, 10);
+        world = new World(width, height, 0, 10, 0, 20);
         ShowWorld();
+        StartCoroutine(Move());
     }
     public void Update()
     {
-        world.ChangeWorld();
-        ShowWorld();
+
     }
     public void ShowWorld()
     {
@@ -61,6 +62,25 @@ public class WorldManager : MonoBehaviour
                 spriteRenderer.color = new UnityEngine.Color((float)world.warmMap.map[i, j] / world.warmMap.maxVolume, 0, 1 - (float)world.warmMap.map[i, j] / world.warmMap.maxVolume, 1f);
                 Instantiate(cell, new Vector3(j, i, 0), Quaternion.identity);
             }
+        }
+    }
+    IEnumerator Move()
+    {
+        int count = 0;
+        while (true)
+        {
+            count++;
+            if (count == 1)
+            {
+                world.ChangeWorld();
+                ShowWorld();
+                count = 0;
+            }
+            else
+            {
+                ShowWorld();
+            }
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }
