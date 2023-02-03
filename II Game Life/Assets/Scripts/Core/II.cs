@@ -142,12 +142,13 @@ public class RandomII : II
         }
 
         actions[result]();
+        
         CalculateParameters(
             result != 0,
             world.foodMap.map[coordinateY, coordinateX],
             world.warmMap.map[coordinateY, coordinateX]
         );
-        
+
         condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
 
         if (world.foodMap.map[coordinateY, coordinateX] != 0)
@@ -161,81 +162,68 @@ public class RandomII : II
         double result = 0;
         int foodMetric = condition.foodMetric;
         int tempMetric = condition.tempMetric;
+
+        int localWarm = world.warmMap.map[importedY, importedX];
+        int localFood = world.foodMap.map[importedY, importedX];
+        
         try
         {
             if (temp <= (minTemp + maxTemp) / 2)
             {
-                if (world.warmMap.map[importedY, importedX] < minTemp) // 1 ++
+                if (localWarm < minTemp) // 1 ++
                 {
-                    result = (minTemp - world.warmMap.map[importedY, importedX]) * (-2) * tempMetric +
-                             world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = (minTemp - localWarm) * (-2) * tempMetric + localFood * foodMetric;
                 }
-                else if (world.warmMap.map[importedY, importedX] > maxTemp) // 4 ++
+                else if (localWarm > maxTemp) // 4 ++
                 {
-                    result = ((maxTemp - temp) - (world.warmMap.map[importedY, importedX] - maxTemp) * 2) * tempMetric +
-                             world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = ((maxTemp - temp) - (localWarm - maxTemp) * 2) * tempMetric + localFood * foodMetric;
                 }
-                else if ((world.warmMap.map[importedY, importedX] >= minTemp) &&
-                         (world.warmMap.map[importedY, importedX] < (minTemp + maxTemp) / 2)) // 2 ++
+                else if ((localWarm >= minTemp) && (localWarm < (minTemp + maxTemp) / 2)) // 2 ++
                 {
-                    if (world.warmMap.map[importedY, importedX] >= temp)
+                    if (localWarm >= temp)
                     {
-                        result = ((world.warmMap.map[importedY, importedX] - minTemp) * 0.5 +
-                                  (world.warmMap.map[importedY, importedX] - temp)) * tempMetric +
-                                 world.foodMap.map[importedY, importedX] * foodMetric;
+                        result = ((localWarm - minTemp) * 0.5 + (localWarm - temp)) * tempMetric +
+                                 localFood * foodMetric;
                     }
                     else
                     {
-                        result = (world.warmMap.map[importedY, importedX] - minTemp) * 0.5 * tempMetric +
-                                 world.foodMap.map[importedY, importedX] * foodMetric;
+                        result = (localWarm - minTemp) * 0.5 * tempMetric + localFood * foodMetric;
                     }
                 }
-                else if ((world.warmMap.map[importedY, importedX] >= (minTemp + maxTemp) / 2) &&
-                         (world.warmMap.map[importedY, importedX] <= maxTemp)) // 3 ++
+                else if ((localWarm >= (minTemp + maxTemp) / 2) && (localWarm <= maxTemp)) // 3 ++
                 {
-                    result =
-                        ((maxTemp - temp) - (maxTemp - world.warmMap.map[importedY, importedX]) * 0.5) * tempMetric +
-                        world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = ((maxTemp - temp) - (maxTemp - localWarm) * 0.5) * tempMetric + localFood * foodMetric;
                 }
             }
             else
             {
-                if (world.warmMap.map[importedY, importedX] < minTemp) // 1 ++
+                if (localWarm < minTemp) // 1 ++
                 {
-                    result = ((temp - minTemp) - (minTemp - world.warmMap.map[importedY, importedX]) * 2) * tempMetric +
-                             world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = ((temp - minTemp) - (minTemp - localWarm) * 2) * tempMetric + localFood * foodMetric;
                 }
-                else if (world.warmMap.map[importedY, importedX] > maxTemp) // 4 ++
+                else if (localWarm > maxTemp) // 4 ++
                 {
-                    result = (world.warmMap.map[importedY, importedX] - maxTemp) * (-2) * tempMetric +
-                             world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = (localWarm - maxTemp) * (-2) * tempMetric + localFood * foodMetric;
                 }
-                else if ((world.warmMap.map[importedY, importedX] >= minTemp) &&
-                         (world.warmMap.map[importedY, importedX] < (minTemp + maxTemp) / 2)) // 2 ++
+                else if ((localWarm >= minTemp) && (localWarm < (minTemp + maxTemp) / 2)) // 2 ++
                 {
-                    result =
-                        ((temp - minTemp) - (world.warmMap.map[importedY, importedX] - minTemp) * 0.5) * tempMetric +
-                        world.foodMap.map[importedY, importedX] * foodMetric;
+                    result = ((temp - minTemp) - (localWarm - minTemp) * 0.5) * tempMetric + localFood * foodMetric;
                 }
-                else if ((world.warmMap.map[importedY, importedX] >= (minTemp + maxTemp) / 2) &&
-                         (world.warmMap.map[importedY, importedX] <= maxTemp)) // 3 ++
+                else if ((localWarm >= (minTemp + maxTemp) / 2) && (localWarm <= maxTemp)) // 3 ++
                 {
-                    if (world.warmMap.map[importedY, importedX] <= temp)
+                    if (localWarm <= temp)
                     {
-                        result = ((maxTemp - world.warmMap.map[importedY, importedX]) * 0.5 +
-                                  (temp - world.warmMap.map[importedY, importedX])) * tempMetric +
-                                 world.foodMap.map[importedY, importedX] * foodMetric;
+                        result = ((maxTemp - localWarm) * 0.5 + (temp - localWarm)) * tempMetric + localFood * foodMetric;
                     }
                     else
                     {
-                        result = (maxTemp - world.warmMap.map[importedY, importedX]) * 0.5 * tempMetric +
-                                 world.foodMap.map[importedY, importedX] * foodMetric;
+                        result = (maxTemp - localWarm) * 0.5 * tempMetric + localFood * foodMetric;
                     }
                 }
             }
-            //result = world.foodMap.map[importedY, importedX] * foodMetric +
-            //    (world.warmMap.maxVolume - Math.Abs(world.warmMap.map[importedY, importedX])) * tempMetric;
-            //result = tempMetric * Math.Abs(world.warmMap.map[importedY, importedX]);
+            //result = currentFood * foodMetric +
+            //    (world.warmMap.maxVolume - Math.Abs(currentWarm)) * tempMetric;
+            //result = tempMetric * Math.Abs(currentWarm);
         }
         catch
         {
