@@ -16,6 +16,8 @@ public class CreatureManager : MonoBehaviour
 
     public GameObject creature;
     GameObject asv;
+
+    private WorldManager worldManager;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,7 @@ public class CreatureManager : MonoBehaviour
         coordinateY = 10;
         II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
+        worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
         Info();
         StartCoroutine(Move());
     }
@@ -42,33 +45,34 @@ public class CreatureManager : MonoBehaviour
     }
     public void Info()
     {
-        Debug.LogError(II.temp);
-        Debug.LogError(II.satiety);
-        Debug.LogError(II.condition);
+        Debug.Log($"Temp: {II.temp}");
+        Debug.Log($"Satiety: {II.satiety}");
+        Debug.Log($"Condition: {II.condition}");
     }
     public void RestartCreature()
     {
-        GameObject creat = GameObject.FindGameObjectWithTag("Creature");
-        Destroy(creat);
+        Destroy(asv);
         coordinateX = 10;
         coordinateY = 10;
         II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
     }
+    
     IEnumerator Move()
     {
         while (true)
         {
-            if (II.condition.name == "Dead")
+            if (II.condition is Dead)
             {
-                GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world = new World(20, 20, 0, 10, 0, 10);
-                GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().ShowWorld();
+                Debug.LogWarning("Creature DEAD");
+                worldManager.world = new World(20, 20, 0, 10, 0, 10);
+                worldManager.ShowWorld();
                 RestartCreature();
             }
             else
             {
-                II.ChooseMove(GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
+                II.ChooseMove(worldManager.world);
                 Info();
                 asv.transform.position = new Vector3(II.coordinateX, II.coordinateY, 0);
             }

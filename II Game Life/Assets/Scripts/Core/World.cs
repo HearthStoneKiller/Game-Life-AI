@@ -39,6 +39,7 @@ public class FoodMap: IChangeable
         maxVolume = 0;
         minVolume = 0;
         map = new int[importedY, importedX];
+        
         for (int i = 0; i < importedY; i++)
         {
             for (int j = 0; j < importedX; j++)
