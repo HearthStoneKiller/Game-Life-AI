@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using Unity.Android.Types;
 using UnityEngine;
 using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
@@ -22,7 +21,7 @@ public class CreatureManager : MonoBehaviour
     {
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 2, 8, 5);
+        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
         StartCoroutine(Move());
@@ -53,7 +52,7 @@ public class CreatureManager : MonoBehaviour
         Destroy(creat);
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 1, 9, 5);
+        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
     }

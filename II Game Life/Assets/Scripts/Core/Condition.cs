@@ -11,13 +11,13 @@ public class Condition
     public Condition CalculateCondition(int temp, int maxTemp, int minTemp, int satiety, int maxSatiety)
     {
         Condition condition;
-        if (satiety >= maxSatiety / 2)
+        if (satiety > maxSatiety / 2)
         {
-            if (temp <= maxTemp / 3)
+            if (temp <= minTemp + (maxTemp - minTemp) / 3)
             {
                 condition = new Cold();
             }
-            else if (temp > maxTemp - maxTemp / 3)
+            else if (temp > maxTemp - (maxTemp - minTemp) / 3)
             {
                 condition = new Hot();
             }
@@ -28,11 +28,11 @@ public class Condition
         }
         else
         {
-            if (temp <= maxTemp / 3)
+            if (temp <= minTemp + (maxTemp - minTemp)/3)
             {
                 condition = new HungerAndCold();
             }
-            else if (temp > maxTemp - maxTemp / 3)
+            else if (temp > maxTemp - (maxTemp - minTemp) / 3)
             {
                 condition = new HungerAndHot();
             }
@@ -53,8 +53,8 @@ public class Optimal: Condition
     public Optimal()
     {
         name = "Optimal";
-        foodMetric = 3;
-        tempMetric = 2;
+        foodMetric = 2;
+        tempMetric = 1;
     }
 }
 public class Cold: Condition
@@ -63,7 +63,7 @@ public class Cold: Condition
     {
         name = "Cold";
         foodMetric = 1;
-        tempMetric = 3;
+        tempMetric = 2;
 
     }
 }
@@ -73,7 +73,7 @@ public class Hot: Condition
     {
         name = "Hot";
         foodMetric = 1;
-        tempMetric = 3;
+        tempMetric = 2;
     }
 }
 public class Hunger: Condition
@@ -81,8 +81,8 @@ public class Hunger: Condition
     public Hunger()
     {
         name = "Hunger";
-        foodMetric = 1;
-        tempMetric = 3;
+        foodMetric = 2;
+        tempMetric = 1;
     }
 }
 public class HungerAndCold: Condition
@@ -91,7 +91,7 @@ public class HungerAndCold: Condition
     {
         name = "HungerAndCold";
         foodMetric = 1;
-        tempMetric = 3;
+        tempMetric = 1;
     }
 }
 public class HungerAndHot: Condition
@@ -100,7 +100,7 @@ public class HungerAndHot: Condition
     {
         name = "HungerAndHot";
         foodMetric = 1;
-        tempMetric = 3;
+        tempMetric = 1;
     }
 }
 public class Dead : Condition
