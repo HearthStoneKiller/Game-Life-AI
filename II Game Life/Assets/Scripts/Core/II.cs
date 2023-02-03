@@ -163,61 +163,61 @@ public class RandomII : II
         int foodMetric = condition.foodMetric;
         int tempMetric = condition.tempMetric;
 
-        int localWarm = world.warmMap.map[importedY, importedX];
+        int localTemp = world.warmMap.map[importedY, importedX];
         int localFood = world.foodMap.map[importedY, importedX];
         
         try
         {
             if (temp <= (minTemp + maxTemp) / 2)
             {
-                if (localWarm < minTemp) // 1 ++
+                if (localTemp < minTemp) // 1 ++
                 {
-                    result = (minTemp - localWarm) * (-2) * tempMetric + localFood * foodMetric;
+                    result = (minTemp - localTemp) * (-2) * tempMetric + localFood * foodMetric;
                 }
-                else if (localWarm > maxTemp) // 4 ++
+                else if (localTemp > maxTemp) // 4 ++
                 {
-                    result = ((maxTemp - temp) - (localWarm - maxTemp) * 2) * tempMetric + localFood * foodMetric;
+                    result = ((maxTemp - temp) - (localTemp - maxTemp) * 2) * tempMetric + localFood * foodMetric;
                 }
-                else if ((localWarm >= minTemp) && (localWarm < (minTemp + maxTemp) / 2)) // 2 ++
+                else if ((localTemp >= minTemp) && (localTemp < (minTemp + maxTemp) / 2)) // 2 ++
                 {
-                    if (localWarm >= temp)
+                    if (localTemp >= temp)
                     {
-                        result = ((localWarm - minTemp) * 0.5 + (localWarm - temp)) * tempMetric +
+                        result = ((localTemp - minTemp) * 0.5 + (localTemp - temp)) * tempMetric +
                                  localFood * foodMetric;
                     }
                     else
                     {
-                        result = (localWarm - minTemp) * 0.5 * tempMetric + localFood * foodMetric;
+                        result = (localTemp - minTemp) * 0.5 * tempMetric + localFood * foodMetric;
                     }
                 }
-                else if ((localWarm >= (minTemp + maxTemp) / 2) && (localWarm <= maxTemp)) // 3 ++
+                else if ((localTemp >= (minTemp + maxTemp) / 2) && (localTemp <= maxTemp)) // 3 ++
                 {
-                    result = ((maxTemp - temp) - (maxTemp - localWarm) * 0.5) * tempMetric + localFood * foodMetric;
+                    result = ((maxTemp - temp) - (maxTemp - localTemp) * 0.5) * tempMetric + localFood * foodMetric;
                 }
             }
             else
             {
-                if (localWarm < minTemp) // 1 ++
+                if (localTemp < minTemp) // 1 ++
                 {
-                    result = ((temp - minTemp) - (minTemp - localWarm) * 2) * tempMetric + localFood * foodMetric;
+                    result = ((temp - minTemp) - (minTemp - localTemp) * 2) * tempMetric + localFood * foodMetric;
                 }
-                else if (localWarm > maxTemp) // 4 ++
+                else if (localTemp > maxTemp) // 4 ++
                 {
-                    result = (localWarm - maxTemp) * (-2) * tempMetric + localFood * foodMetric;
+                    result = (localTemp - maxTemp) * (-2) * tempMetric + localFood * foodMetric;
                 }
-                else if ((localWarm >= minTemp) && (localWarm < (minTemp + maxTemp) / 2)) // 2 ++
+                else if ((localTemp >= minTemp) && (localTemp < (minTemp + maxTemp) / 2)) // 2 ++
                 {
-                    result = ((temp - minTemp) - (localWarm - minTemp) * 0.5) * tempMetric + localFood * foodMetric;
+                    result = ((temp - minTemp) - (localTemp - minTemp) * 0.5) * tempMetric + localFood * foodMetric;
                 }
-                else if ((localWarm >= (minTemp + maxTemp) / 2) && (localWarm <= maxTemp)) // 3 ++
+                else if ((localTemp >= (minTemp + maxTemp) / 2) && (localTemp <= maxTemp)) // 3 ++
                 {
-                    if (localWarm <= temp)
+                    if (localTemp <= temp)
                     {
-                        result = ((maxTemp - localWarm) * 0.5 + (temp - localWarm)) * tempMetric + localFood * foodMetric;
+                        result = ((maxTemp - localTemp) * 0.5 + (temp - localTemp)) * tempMetric + localFood * foodMetric;
                     }
                     else
                     {
-                        result = (maxTemp - localWarm) * 0.5 * tempMetric + localFood * foodMetric;
+                        result = (maxTemp - localTemp) * 0.5 * tempMetric + localFood * foodMetric;
                     }
                 }
             }
