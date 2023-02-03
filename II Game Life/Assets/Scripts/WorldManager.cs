@@ -16,6 +16,8 @@ public class WorldManager : MonoBehaviour
 
     public GameObject cell;
     public GameObject food;
+    
+    
     public void Awake()
     {
         width = 20;

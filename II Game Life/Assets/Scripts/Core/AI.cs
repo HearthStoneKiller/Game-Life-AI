@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class II
+public abstract class AI
 {
     public int coordinateX;
     public int coordinateY;
@@ -95,9 +95,9 @@ public abstract class II
     public List<Action> actions => new List<Action> { Stay, MoveLeft, MoveUp, MoveRight, MoveDown };
 }
 
-public class RandomII : II
+public class RandomAI : AI
 {
-    public RandomII(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
+    public RandomAI(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
     {
         coordinateX = importedX;
         coordinateY = importedY;
@@ -234,9 +234,9 @@ public class RandomII : II
     }
 }
 
-public class BeginnerII : II
+public class BeginnerAI : AI
 {
-    public BeginnerII(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
+    public BeginnerAI(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
     {
         coordinateX = importedX;
         coordinateY = importedY;
@@ -255,7 +255,7 @@ public class BeginnerII : II
     }
 }
 
-public class MasterII : II
+public class MasterAI : AI
 {
     public override void ChooseMove(World world)
     {

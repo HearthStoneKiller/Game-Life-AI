@@ -9,7 +9,7 @@ using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCou
 
 public class CreatureManager : MonoBehaviour
 {
-    RandomII II;
+    RandomAI _ai;
 
     int coordinateX;
     int coordinateY;
@@ -23,7 +23,7 @@ public class CreatureManager : MonoBehaviour
     {
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
+        _ai = new RandomAI(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
         Info();
@@ -45,16 +45,16 @@ public class CreatureManager : MonoBehaviour
     }
     public void Info()
     {
-        Debug.Log($"Temp: {II.temp}");
-        Debug.Log($"Satiety: {II.satiety}");
-        Debug.Log($"Condition: {II.condition}");
+        Debug.Log($"Temp: {_ai.temp}");
+        Debug.Log($"Satiety: {_ai.satiety}");
+        Debug.Log($"Condition: {_ai.condition}");
     }
     public void RestartCreature()
     {
         Destroy(asv);
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
+        _ai = new RandomAI(coordinateX, coordinateY, 2, 8, 10);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
     }
@@ -63,7 +63,7 @@ public class CreatureManager : MonoBehaviour
     {
         while (true)
         {
-            if (II.condition is Dead)
+            if (_ai.condition is Dead)
             {
                 Debug.LogWarning("Creature DEAD");
                 worldManager.world = new World(20, 20, 0, 10, 0, 10);
@@ -72,9 +72,9 @@ public class CreatureManager : MonoBehaviour
             }
             else
             {
-                II.ChooseMove(worldManager.world);
+                _ai.ChooseMove(worldManager.world);
                 Info();
-                asv.transform.position = new Vector3(II.coordinateX, II.coordinateY, 0);
+                asv.transform.position = new Vector3(_ai.coordinateX, _ai.coordinateY, 0);
             }
             yield return new WaitForSeconds(0.5f);
         }
