@@ -10,7 +10,7 @@ public class World
     public WarmMap warmMap;
     World()
     {
-
+ 
     }
     public World(int importedX, int importedY, int minFood, int maxFood, int minWarm, int maxWarm)
     {

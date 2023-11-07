@@ -50,6 +50,12 @@ public class Condition
 }
 public class Optimal: Condition
 {
+    public Optimal(int foodMetric, int tempMetric)
+    {
+        this.name = "Optimal";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public Optimal()
     {
         name = "Optimal";
@@ -59,6 +65,12 @@ public class Optimal: Condition
 }
 public class Cold: Condition
 {
+    public Cold(int foodMetric, int tempMetric)
+    {
+        this.name = "Cold";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public Cold()
     {
         name = "Cold";
@@ -69,6 +81,12 @@ public class Cold: Condition
 }
 public class Hot: Condition
 {
+    public Hot(int foodMetric, int tempMetric)
+    {
+        this.name = "Hot";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public Hot()
     {
         name = "Hot";
@@ -78,6 +96,12 @@ public class Hot: Condition
 }
 public class Hunger: Condition
 {
+    public Hunger(int foodMetric, int tempMetric)
+    {
+        this.name = "Hunger";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public Hunger()
     {
         name = "Hunger";
@@ -87,6 +111,12 @@ public class Hunger: Condition
 }
 public class HungerAndCold: Condition
 {
+    public HungerAndCold(int foodMetric, int tempMetric)
+    {
+        this.name = "HungerAndCold";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public HungerAndCold()
     {
         name = "HungerAndCold";
@@ -96,6 +126,12 @@ public class HungerAndCold: Condition
 }
 public class HungerAndHot: Condition
 {
+    public HungerAndHot(int foodMetric, int tempMetric)
+    {
+        this.name = "HungerAndHot";
+        this.foodMetric = foodMetric;
+        this.tempMetric = tempMetric;
+    }
     public HungerAndHot()
     {
         name = "HungerAndHot";

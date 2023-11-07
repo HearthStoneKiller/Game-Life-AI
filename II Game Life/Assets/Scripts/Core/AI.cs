@@ -4,24 +4,43 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public abstract class II
+public abstract class AI : IObserver<Time>
 {
+    public World world;
     public int coordinateX;
     public int coordinateY;
 
-    public int temp;// Температура
-    public int maxTemp;// Температура смерти при жаре
-    public int minTemp;// Температура смерти при холоде
+    public int temp;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public int maxTemp;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    public int minTemp;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
-    public int satiety;// Сытость
-    public int maxSatiety;// Максимальное количество запасов
+    public int satiety;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    public int maxSatiety;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
     public int mindDeep;
-
+    // Conditions
+    public Optimal optimal;
+    public Cold cold;
+    public Hot hot;
+    public Hunger hunger;
+    public HungerAndCold hungerAndCold;
+    public HungerAndHot hungerAndHot;
+    Dead dead;
     public Condition condition;
-    //energy = Mathf.Round(Random.Range(0f, 20f)) / 2;
-    //satiety = Mathf.Round(Random.Range(0f, 20f)) / 2;
-    //mindDeep = 1;
+    // Conditions
+    public void Update(Time time)
+    {
+        //ChooseMove(world);
+    }
+    public void SetConditions(Optimal optimal, Cold cold, Hot hot, Hunger hunger, HungerAndCold hungerAndCold, HungerAndHot hungerAndHot)
+    {
+        this.optimal = optimal;
+        this.cold = cold;
+        this.hot = hot;
+        this.hunger = hunger;
+        this.hungerAndCold = hungerAndCold;
+        this.hungerAndHot = hungerAndHot;
+    }
     public void MoveRight()
     {
         WorldManager worldManager = GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>();
@@ -62,7 +81,7 @@ public abstract class II
     {
 
     }
-    public abstract void ChooseMove(World world);
+    public abstract void ChooseMove();
     public void CalculateParameters(bool isMoved, int cellFood, int cellTemp)
     {
         if (isMoved)
@@ -83,9 +102,9 @@ public abstract class II
         }
     }
 }
-public class RandomII : II
+public class RandomAI : AI
 {
-    public RandomII(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
+    public RandomAI(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety, World world)
     {
         coordinateX = importedX;
         coordinateY = importedY;
@@ -101,6 +120,7 @@ public class RandomII : II
 
         condition = new Condition();
         condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        this.world = world;
     }
     public void RandomMove()
     {
@@ -124,7 +144,7 @@ public class RandomII : II
                 break;
         }
     }
-    public override void ChooseMove(World world)
+    public override void ChooseMove()
     {
         double[] metric = new double[5];
         metric[0] = CalculateMetric(coordinateX, coordinateY, world);
@@ -233,7 +253,6 @@ public class RandomII : II
                         result = (maxTemp - world.warmMap.map[importedY, importedX]) * 0.5 * tempMetric + world.foodMap.map[importedY, importedX] * foodMetric;
                     }
                 }
-
             }
             //result = world.foodMap.map[importedY, importedX] * foodMetric +
             //    (world.warmMap.maxVolume - Math.Abs(world.warmMap.map[importedY, importedX])) * tempMetric;
@@ -246,9 +265,9 @@ public class RandomII : II
         return result;
     }
 }
-public class BeginnerII : II
+public class BeginnerAI : AI
 {
-    public BeginnerII(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
+    public BeginnerAI(int importedX, int importedY, int importedMinTemp, int importedMaxTemp, int importedMaxSatiety)
     {
         coordinateX = importedX;
         coordinateY = importedY;
@@ -261,15 +280,72 @@ public class BeginnerII : II
         maxSatiety = importedMaxSatiety;
         mindDeep = 1;
     }
-    public override void ChooseMove(World world)
+    public override void ChooseMove()
+    {
+        double[] metric = new double[5];
+        metric[0] = CalculateMetric(coordinateX, coordinateY, world);
+        metric[1] = CalculateMetric(coordinateX - 1, coordinateY, world);
+        metric[2] = CalculateMetric(coordinateX, coordinateY + 1, world);
+        metric[3] = CalculateMetric(coordinateX + 1, coordinateY, world);
+        metric[4] = CalculateMetric(coordinateX, coordinateY - 1, world);
+        int result = 0;
+        for (int i = 1;i < 5; i++)
+        {
+            if (metric[result] <= metric[i])
+            {
+                result = i;
+            }
+        }
+        if (result == 0)
+        {
+            Stay();
+            CalculateParameters(false, world.foodMap.map[coordinateY,coordinateX], world.warmMap.map[coordinateY, coordinateX]);
+            condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        }
+        if (result == 1)
+        {
+            MoveLeft();
+            CalculateParameters(true, world.foodMap.map[coordinateY, coordinateX], world.warmMap.map[coordinateY, coordinateX]);
+            condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        }
+        if (result == 2)
+        {
+            MoveUp();
+            CalculateParameters(true, world.foodMap.map[coordinateY, coordinateX], world.warmMap.map[coordinateY, coordinateX]);
+            condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        }
+        if (result == 3)
+        {
+            MoveRight();
+            CalculateParameters(true, world.foodMap.map[coordinateY, coordinateX], world.warmMap.map[coordinateY, coordinateX]);
+            condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        }
+        if (result == 4)
+        {
+            MoveDown();
+            CalculateParameters(true, world.foodMap.map[coordinateY, coordinateX], world.warmMap.map[coordinateY, coordinateX]);
+            condition = condition.CalculateCondition(temp, maxTemp, minTemp, satiety, maxSatiety);
+        }
+        if (world.foodMap.map[coordinateY, coordinateX] != 0)
+        {
+            world.foodMap.map[coordinateY, coordinateX]--;
+        }
+    }
+    public double CalculateMetric(int importedX, int importedY, World world)
+    {
+        double result = 0; 
+        int foodMetric = condition.foodMetric;
+        int tempMetric = condition.tempMetric;
+    }
+}
+public class MasterAI : AI
+{
+    public override void ChooseMove()
     {
 
     }
 }
-public class MasterII : II
+public interface IObserver<TypeDefinition>
 {
-    public override void ChooseMove(World world)
-    {
-
-    }
+    void Update(TypeDefinition data);
 }

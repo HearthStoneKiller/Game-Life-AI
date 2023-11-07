@@ -9,7 +9,7 @@ using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCou
 
 public class CreatureManager : MonoBehaviour
 {
-    RandomII II;
+    RandomAI AI;
 
     int coordinateX;
     int coordinateY;
@@ -21,7 +21,7 @@ public class CreatureManager : MonoBehaviour
     {
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
+        AI = new RandomAI(coordinateX, coordinateY, 2, 8, 10, GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
         StartCoroutine(Move());
@@ -42,9 +42,9 @@ public class CreatureManager : MonoBehaviour
     }
     public void Info()
     {
-        Debug.LogError(II.temp);
-        Debug.LogError(II.satiety);
-        Debug.LogError(II.condition);
+        Debug.LogError(AI.temp);
+        Debug.LogError(AI.satiety);
+        Debug.LogError(AI.condition);
     }
     public void RestartCreature()
     {
@@ -52,7 +52,7 @@ public class CreatureManager : MonoBehaviour
         Destroy(creat);
         coordinateX = 10;
         coordinateY = 10;
-        II = new RandomII(coordinateX, coordinateY, 2, 8, 10);
+        AI = new RandomAI(coordinateX, coordinateY, 2, 8, 10, GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
         asv = Instantiate(creature, new Vector3(coordinateX, coordinateY, 0), Quaternion.identity);
         Info();
     }
@@ -60,7 +60,7 @@ public class CreatureManager : MonoBehaviour
     {
         while (true)
         {
-            if (II.condition.name == "Dead")
+            if (AI.condition.name == "Dead")
             {
                 GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world = new World(20, 20, 0, 10, 0, 10);
                 GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().ShowWorld();
@@ -68,9 +68,9 @@ public class CreatureManager : MonoBehaviour
             }
             else
             {
-                II.ChooseMove(GameObject.FindGameObjectWithTag("WorldManager").GetComponent<WorldManager>().world);
+                AI.ChooseMove();
                 Info();
-                asv.transform.position = new Vector3(II.coordinateX, II.coordinateY, 0);
+                asv.transform.position = new Vector3(AI.coordinateX, AI.coordinateY, 0);
             }
             yield return new WaitForSeconds(0.5f);
         }
